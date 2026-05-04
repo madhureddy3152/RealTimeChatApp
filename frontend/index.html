@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat Application</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- SockJS and STOMP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <div id="login-page" class="glass-container">
+        <div class="login-content">
+            <h2>Join Chat Room</h2>
+            <form id="login-form">
+                <input type="text" id="name" placeholder="Enter your username" autocomplete="off" required />
+                <button type="submit" class="primary-btn">Start Chatting</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="chat-page" class="glass-container hidden">
+        <div class="chat-header">
+            <h2>Real-Time Chat</h2>
+            <button id="leave-btn" class="secondary-btn">Leave</button>
+        </div>
+        <ul id="message-area"></ul>
+        <form id="message-form" class="message-input-area">
+            <input type="text" id="message" placeholder="Type a message..." autocomplete="off" required />
+            <button type="submit" class="primary-btn">Send</button>
+        </form>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
