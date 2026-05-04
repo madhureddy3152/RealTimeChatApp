@@ -13,9 +13,21 @@ let stompClient = null;
 let username = null;
 
 const colors = [
-    '#2196F3', '#32c787', '#00BCD4', '#ff5652',
-    '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
+    '#10b981', '#059669', '#0d9488', '#0f766e',
+    '#22d3ee', '#0891b2', '#fbbf24', '#f59e0b',
+    '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef'
 ];
+
+function getAvatarColor(messageSender) {
+    let hash = 0;
+    for (let i = 0; i < messageSender.length; i++) {
+        hash = 31 * hash + messageSender.charCodeAt(i);
+    }
+    const index = Math.abs(hash % colors.length);
+    return colors[index];
+}
+
+
 
 function connect(event) {
     username = document.querySelector('#name').value.trim();
@@ -24,8 +36,11 @@ function connect(event) {
         loginPage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
-        // Use the absolute URL if frontend is not served by Spring Boot
-        const socket = new SockJS('http://localhost:8082/ws');
+        const backendHost = window.location.hostname || 'localhost';
+        const backendPort = 8082;
+        const socketUrl = `http://${backendHost}:${backendPort}/ws`;
+
+        const socket = new SockJS(socketUrl);
         stompClient = Stomp.over(socket);
 
         // Disable debug logging to keep console clean
@@ -48,9 +63,18 @@ function onConnected() {
 }
 
 function onError(error) {
-    console.error('Could not connect to WebSocket server. Please refresh this page to try again!');
-    alert('Could not connect to WebSocket server. Is the backend running on port 8082?');
-    // revert to login page
+    console.error('Could not connect to WebSocket server.', error);
+    // Show error message on login page
+    let errorMsg = loginForm.querySelector('.error-msg');
+    if (!errorMsg) {
+        errorMsg = document.createElement('p');
+        errorMsg.classList.add('error-msg');
+        errorMsg.style.color = '#ff4444';
+        errorMsg.style.marginTop = '10px';
+        loginForm.appendChild(errorMsg);
+    }
+    errorMsg.textContent = 'Connection failed. Please ensure the backend is running and try again.';
+    
     loginPage.classList.remove('hidden');
     chatPage.classList.add('hidden');
 }
@@ -103,7 +127,8 @@ function onMessageReceived(payload) {
         if (message.sender === username) {
             messageInfo.innerHTML = `<span>${timestamp}</span>`;
         } else {
-            messageInfo.innerHTML = `<span>${message.sender}</span><span>${timestamp}</span>`;
+            const userColor = getAvatarColor(message.sender);
+            messageInfo.innerHTML = `<span style="color: ${userColor}; font-weight: 600;">${message.sender}</span><span>${timestamp}</span>`;
         }
 
         messageElement.appendChild(messageBox);
@@ -120,13 +145,28 @@ function onMessageReceived(payload) {
 }
 
 function updateOnlineUsers(users) {
+    if (!users || !Array.isArray(users)) return;
+    
     onlineUsersList.innerHTML = '';
-    users.forEach(user => {
+    users.sort().forEach(user => {
         const li = document.createElement('li');
-        li.textContent = user;
+        
+        const dot = document.createElement('span');
+        dot.style.display = 'inline-block';
+        dot.style.width = '10px';
+        dot.style.height = '10px';
+        dot.style.borderRadius = '50%';
+        dot.style.marginRight = '10px';
+        dot.style.backgroundColor = getAvatarColor(user);
+        
+        li.appendChild(dot);
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = user;
         if (user === username) {
-            li.textContent += ' (You)';
+            nameSpan.textContent += ' (You)';
         }
+        li.appendChild(nameSpan);
+        
         onlineUsersList.appendChild(li);
     });
 }
