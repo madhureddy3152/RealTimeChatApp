@@ -6,6 +6,7 @@ const loginForm = document.querySelector('#login-form');
 const messageForm = document.querySelector('#message-form');
 const messageInput = document.querySelector('#message');
 const messageArea = document.querySelector('#message-area');
+const onlineUsersList = document.querySelector('#online-users-list');
 const leaveBtn = document.querySelector('#leave-btn');
 
 let stompClient = null;
@@ -111,6 +112,23 @@ function onMessageReceived(payload) {
 
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight;
+
+    // Update Online Users List
+    if (message.onlineUsers) {
+        updateOnlineUsers(message.onlineUsers);
+    }
+}
+
+function updateOnlineUsers(users) {
+    onlineUsersList.innerHTML = '';
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = user;
+        if (user === username) {
+            li.textContent += ' (You)';
+        }
+        onlineUsersList.appendChild(li);
+    });
 }
 
 function leaveChat() {

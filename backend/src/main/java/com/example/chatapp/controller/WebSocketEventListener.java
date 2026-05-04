@@ -2,6 +2,7 @@ package com.example.chatapp.controller;
 
 import com.example.chatapp.model.ChatMessage;
 import com.example.chatapp.model.MessageType;
+import com.example.chatapp.controller.ChatController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -32,6 +33,9 @@ public class WebSocketEventListener {
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(MessageType.LEAVE);
             chatMessage.setSender(username);
+
+            ChatController.getOnlineUsers().remove(username);
+            chatMessage.setOnlineUsers(ChatController.getOnlineUsers());
 
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
         }

@@ -14,8 +14,9 @@
 <body>
     <div class="background-animation"></div>
 
-    <div id="login-page" class="glass-container">
+    <div id="login-page" class="glass-container login-compact">
         <div class="login-content">
+            <img src="assets/chat_icon.png" alt="Chat Icon" class="login-illustration">
             <h2>Join Chat Room</h2>
             <form id="login-form">
                 <input type="text" id="name" placeholder="Enter your username" autocomplete="off" required />
@@ -25,15 +26,23 @@
     </div>
 
     <div id="chat-page" class="glass-container hidden">
-        <div class="chat-header">
-            <h2>Real-Time Chat</h2>
-            <button id="leave-btn" class="secondary-btn">Leave</button>
+        <div class="chat-main">
+            <div class="chat-content">
+                <div class="chat-header">
+                    <h2>Real-Time Chat</h2>
+                    <button id="leave-btn" class="secondary-btn">Leave</button>
+                </div>
+                <ul id="message-area"></ul>
+                <form id="message-form" class="message-input-area">
+                    <input type="text" id="message" placeholder="Type a message..." autocomplete="off" required />
+                    <button type="submit" class="primary-btn">Send</button>
+                </form>
+            </div>
+            <div class="online-users-sidebar">
+                <h3>Online</h3>
+                <ul id="online-users-list"></ul>
+            </div>
         </div>
-        <ul id="message-area"></ul>
-        <form id="message-form" class="message-input-area">
-            <input type="text" id="message" placeholder="Type a message..." autocomplete="off" required />
-            <button type="submit" class="primary-btn">Send</button>
-        </form>
     </div>
 
     <script src="app.js"></script>
