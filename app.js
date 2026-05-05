@@ -36,9 +36,14 @@ function connect(event) {
         loginPage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
-        const backendHost = window.location.hostname || 'localhost';
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const backendHost = isGitHubPages ? 'localhost' : (window.location.hostname || 'localhost');
         const backendPort = 8082;
         const socketUrl = `http://${backendHost}:${backendPort}/ws`;
+
+        if (isGitHubPages) {
+            console.warn("Running on GitHub Pages. Note: Browsers block HTTPS -> HTTP connections to localhost.");
+        }
 
         const socket = new SockJS(socketUrl);
         stompClient = Stomp.over(socket);
@@ -73,7 +78,11 @@ function onError(error) {
         errorMsg.style.marginTop = '10px';
         loginForm.appendChild(errorMsg);
     }
-    errorMsg.textContent = 'Connection failed. Please ensure the backend is running and try again.';
+    if (window.location.hostname.includes('github.io')) {
+        errorMsg.textContent = 'GitHub Pages cannot connect to a local backend. Please run the project locally in VS Code (F5) to use the chat!';
+    } else {
+        errorMsg.textContent = 'Connection failed. Please ensure the backend is running and try again.';
+    }
     
     loginPage.classList.remove('hidden');
     chatPage.classList.add('hidden');
