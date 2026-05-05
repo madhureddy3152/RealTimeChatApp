@@ -37,8 +37,8 @@ function connect(event) {
         chatPage.classList.remove('hidden');
 
         const isGitHubPages = window.location.hostname.includes('github.io');
-        // This is the "bridge" URL I created for you!
-        const publicTunnelUrl = 'https://1a1c684b0e217e.lhr.life';
+        // Updated Bridge URL (Serveo)
+        const publicTunnelUrl = 'https://017b1b9e5004b8d3-103-80-162-171.serveousercontent.com';
         const socketUrl = isGitHubPages ? `${publicTunnelUrl}/ws` : `http://localhost:8082/ws`;
 
         if (isGitHubPages) {
