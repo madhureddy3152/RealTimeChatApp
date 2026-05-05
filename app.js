@@ -37,12 +37,12 @@ function connect(event) {
         chatPage.classList.remove('hidden');
 
         const isGitHubPages = window.location.hostname.includes('github.io');
-        const backendHost = isGitHubPages ? 'localhost' : (window.location.hostname || 'localhost');
-        const backendPort = 8082;
-        const socketUrl = `http://${backendHost}:${backendPort}/ws`;
+        // This is the "bridge" URL I created for you!
+        const publicTunnelUrl = 'https://1a1c684b0e217e.lhr.life';
+        const socketUrl = isGitHubPages ? `${publicTunnelUrl}/ws` : `http://localhost:8082/ws`;
 
         if (isGitHubPages) {
-            console.warn("Running on GitHub Pages. Note: Browsers block HTTPS -> HTTP connections to localhost.");
+            console.log("Connected via public bridge: " + publicTunnelUrl);
         }
 
         const socket = new SockJS(socketUrl);
