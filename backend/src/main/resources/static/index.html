@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Chat | Real-Time Messaging</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- SockJS and STOMP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div id="login-page" class="auth-container">
+        <div class="auth-card">
+            <div class="brand">
+                <img src="assets/logo.png" alt="Logo" class="logo-img">
+                <h1>MASTER CHAT</h1>
+            </div>
+            <p class="subtitle">Connect with friends in real-time</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <i data-lucide="user"></i>
+                    <input type="text" id="name" placeholder="Enter your username" autocomplete="off" required />
+                </div>
+                <button type="submit" class="btn-primary">Start Chatting</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="chat-page" class="app-container hidden">
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <img src="assets/logo.png" alt="Logo" class="logo-m-img">
+                    <span class="logo-text">MASTER CHAT</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="dropdown">
+                    <div class="user-profile-summary" id="profile-toggle">
+                        <i data-lucide="chevron-down"></i>
+                        <div class="user-avatar-small" id="current-user-avatar">
+                            <span id="current-user-initial">U</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-menu hidden" id="profile-dropdown">
+                        <button class="dropdown-item" id="settings-btn"><i data-lucide="settings"></i> Settings</button>
+                        <hr>
+                        <button class="dropdown-item logout" id="profile-leave-btn"><i data-lucide="log-out"></i> Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <aside class="sidebar">
+                <div class="search-container">
+                    <div class="search-bar">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search Friends" id="user-search">
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <div class="section-label">Online Users</div>
+                    <ul id="online-users-list" class="user-list">
+                        <!-- Dynamic content -->
+                    </ul>
+                </div>
+            </aside>
+
+            <section class="chat-window">
+                <div class="chat-window-header">
+                    <div class="active-user-info">
+                        <div class="user-avatar" id="active-chat-avatar">
+                            <img src="assets/room.png" alt="Public Room">
+                        </div>
+                        <div class="user-details">
+                            <h3 id="active-chat-name">Public Room</h3>
+                            <span class="status online">Online</span>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <div class="dropdown">
+                            <button class="icon-btn" id="menu-toggle" aria-label="More options" title="More options">
+                                <i data-lucide="more-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu hidden" id="chat-dropdown">
+                                <button class="dropdown-item" id="settings-btn-room"><i data-lucide="settings"></i> Settings</button>
+                                <button class="dropdown-item"><i data-lucide="info"></i> Information</button>
+                                <hr>
+                                <button class="dropdown-item logout" id="leave-btn"><i data-lucide="log-out"></i> Leave
+                                    Room</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message-container" id="message-area">
+                    <!-- Messages will appear here -->
+                    <div class="welcome-notice">
+                        <i data-lucide="message-square"></i>
+                        <p>Welcome to the Public Room! Start a conversation.</p>
+                    </div>
+                </div>
+
+                <footer class="chat-footer">
+                    <form id="message-form" class="message-form">
+                        <div class="input-wrapper">
+                            <input type="text" id="message" placeholder="Write a message..." autocomplete="off"
+                                required />
+                            <div class="input-actions">
+                                <button type="button" class="action-btn" aria-label="Add file" title="Add file">
+                                    <i data-lucide="plus"></i>
+                                </button>
+                                <button type="button" class="action-btn" aria-label="Send image" title="Send image">
+                                    <i data-lucide="image"></i>
+                                </button>
+                                <button type="button" class="action-btn" aria-label="Emojis" title="Emojis">
+                                    <i data-lucide="smile"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="send-btn" aria-label="Send message" title="Send message">
+                            <i data-lucide="send"></i>
+                        </button>
+                    </form>
+                </footer>
+            </section>
+        </main>
+    </div>
+
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-btn" id="close-settings" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label for="theme-select">Theme</label>
+                    <select id="theme-select" title="Select theme">
+                        <option value="light">Light Mode</option>
+                        <option value="dark">Dark Mode</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="notif-check">Notifications</label>
+                    <input type="checkbox" id="notif-check" checked="checked" title="Toggle notifications">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="save-settings">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
